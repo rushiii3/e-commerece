@@ -13,7 +13,8 @@ import { Link } from "expo-router";
 import useCartStore from "@/store/useCartStore";
 import RazorpayCheckout from "react-native-razorpay";
 
-const Cart = ({ data, totalAmount }) => {
+const Cart = ({ data, totalAmount }) => {  
+  console.log((totalAmount * 100).toFixed(2));
   const { bottom } = useSafeAreaInsets();
   const { handleRemoveCart } = useCartStore();
   
@@ -83,7 +84,9 @@ const Cart = ({ data, totalAmount }) => {
                 image: "../assets/images/icon.png",
                 currency: "USD",
                 key: "rzp_test_cA6wZvVTsahL8l", // Your api key
-                amount: `${totalAmount * 100}`,
+                // amount: `${totalAmount * 100}`,
+                amount: `${(totalAmount * 100).toFixed(2)}`,
+
                 name: "GenGlobally",
                 theme: { color: "#F37254" },
               };
@@ -93,6 +96,8 @@ const Cart = ({ data, totalAmount }) => {
                   alert(`Success: ${data.razorpay_payment_id}`);
                 })
                 .catch((error) => {
+                  console.log(error);
+                  
                   // handle failure
                   alert(`Error: ${error.code} | ${error.description}`);
                 });
