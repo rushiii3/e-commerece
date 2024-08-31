@@ -7,11 +7,10 @@ import ProductView from "@/components/ProductView";
 
 const ProductCompoent = withLoading(ProductView);
 const Page = () => {
-  const { id } = useGlobalSearchParams();
-
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["product", id],
-    queryFn: () => fetchProductDetails(id),
+    queryFn: () => fetchProductDetails(parseInt(id)),
     enabled: !!id,
     staleTime: 60 * 1000, // 1 minute
   });

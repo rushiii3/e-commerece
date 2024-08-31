@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  ListRenderItemInfo,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +16,7 @@ import { Link, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductsSearch } from "@/api/api";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Product } from "@/types";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
@@ -26,19 +28,19 @@ const CustomHeader = () => {
   });
   const [filteredData, setfilteredData] = useState([]);
 
-  const fetchSearchResults = async (product:string) => {
-    const filter = data.filter((data) =>
+  const fetchSearchResults = async (product: string) => {
+    const filter = data.filter((data: Product) =>
       data.title.toLowerCase().includes(product.toLowerCase())
     );
     setfilteredData(filter);
   };
   const debouncedSearch = useDebounce(fetchSearchResults, 500);
 
-  const handleSearch = (text:string) => {
+  const handleSearch = (text: string) => {
     settext(text);
     debouncedSearch(text);
   };
-  const renderItemProducts = ({ item }) => (
+  const renderItemProducts = ({ item }: ListRenderItemInfo<Product>) => (
     <Link
       href={{
         pathname: "/[id]",

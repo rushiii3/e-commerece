@@ -11,15 +11,15 @@ const queryClient = new QueryClient();
 
 const RootLayout = () => {
   const router = useRouter();
-  const { setisAuthenticated } = useContext(AuthContext);
+  const authentication = useContext(AuthContext);
   useEffect(() => {
     const checkToken = async () => {
       const token = await SecureStore.getItemAsync("token");
       if (token) {
-        setisAuthenticated(true);
+        authentication?.setisAuthenticated(true);
         console.log("Token available");
       } else {
-        setisAuthenticated(false);
+        authentication?.setisAuthenticated(false);
         console.log("No token found");
       }
     };

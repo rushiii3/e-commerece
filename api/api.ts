@@ -1,3 +1,4 @@
+import { loginType, signUpType } from "@/types";
 import axios from "axios";
 
 const API_BASE_URL = "https://fakestoreapi.com";
@@ -6,7 +7,7 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-export const loginUser = async (data) => {
+export const loginUser = async (data: loginType) => {
   try {
     const response = await api.post("/auth/login", data);
     return response.data;
@@ -16,7 +17,7 @@ export const loginUser = async (data) => {
   }
 };
 
-export const registerUser = async (data) => {
+export const registerUser = async (data: signUpType) => {
   try {
     const response = await api.post("/users", {
       email: data.email,
@@ -45,7 +46,7 @@ export const registerUser = async (data) => {
   }
 };
 
-export const fetchProductDetails = async (productId) => {
+export const fetchProductDetails = async (productId: number) => {
   try {
     const response = await api.get(`/products/${productId}`);
     return response.data;

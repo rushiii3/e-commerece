@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export const useSearch = () => {
-  const [isAscending, setisAscending] = useState(false);
-  const [selectedCategory, setselectedCategory] = useState("ALL");
+  const [isAscending, setisAscending] = useState<boolean>(false);
+  const [selectedCategory, setselectedCategory] = useState<string>("ALL");
   const {
     isPending: isCategeoryLoading,
     isError: isCaetgoryError,

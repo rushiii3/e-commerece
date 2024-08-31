@@ -1,11 +1,11 @@
-export const useDebounce = (func, delay) => {
-  let timeoutId;
+export const useDebounce = (func: (...args: any[]) => void, delay: number) => {
+  let timeoutId: number | undefined;
 
-  return (...args) => {
+  return (...args: any[]) => {
     clearTimeout(timeoutId);
 
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
+    timeoutId = window.setTimeout(() => {
+      func(...args);
     }, delay);
   };
 };

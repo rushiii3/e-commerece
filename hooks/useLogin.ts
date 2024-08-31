@@ -6,11 +6,12 @@ import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { loginUser } from "@/api/api";
 import { useRouter } from "expo-router";
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import { loginType } from "@/types";
 
 export const useLogin = () => {
-  const { setisAuthenticated } = useContext(AuthContext);
+  const authentication = useContext(AuthContext);
 
   const router = useRouter();
   const formSchema = yup.object().shape({
@@ -21,7 +22,7 @@ export const useLogin = () => {
       .required("Please enter your password"),
     username: yup.string().trim().required("Please input your username"),
   });
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset } = useForm<loginType>({
     defaultValues: {
       username: "",
       password: "",
@@ -30,15 +31,14 @@ export const useLogin = () => {
     resolver: yupResolver(formSchema),
   });
 
-  // Define the mutation using react-query's useMutation
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: async (data) => {
       Alert.alert("Login successful", "You are now logged in!");
       await SecureStore.setItemAsync("token", data.token);
       reset();
-      setisAuthenticated(true);
-      router.replace('/');
+      authentication?.setisAuthenticated(true);
+      router.replace("/");
     },
     onError: (error: any) => {
       console.log("Login failed", error.message);
@@ -46,8 +46,7 @@ export const useLogin = () => {
     },
   });
 
-  // Return the necessary hooks and handlers
-  const onSubmit = (data: { username: string; password: string }) => {
+  const onSubmit = (data: loginType) => {
     mutation.mutate(data);
   };
 

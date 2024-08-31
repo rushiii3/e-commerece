@@ -21,9 +21,9 @@ export default function Index() {
     handleCategory,
     isAscending,
     isPending,
-    selectedCategory
+    selectedCategory,
   } = useSearch();
-  const renderItemCategory = ({ item }) => {
+  const renderItemCategory = ({ item }: { item: string }) => {
     return (
       <TouchableOpacity
         onPress={() => {

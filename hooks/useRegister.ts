@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/api";
 import { Alert } from "react-native";
+import { signUpType } from "@/types";
 export const useRegister = () => {
   const formSchema = yup.object().shape({
     firstname: yup
@@ -33,7 +34,7 @@ export const useRegister = () => {
       .string()
       .trim()
       .required("Please input your confirm password")
-      .oneOf([yup.ref("password"), null], "Passwords must match"),
+      .oneOf([yup.ref("password"), ""], "Passwords must match"),
     phone: yup
       .string()
       .trim()
@@ -41,7 +42,7 @@ export const useRegister = () => {
       .matches(/^\d{10}$/, "Phone number must be exactly 10 digits"),
     username: yup.string().trim().required("Please input your username"),
   });
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset } = useForm<signUpType>({
     defaultValues: {
       firstname: "",
       lastname: "",
@@ -58,19 +59,17 @@ export const useRegister = () => {
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: async (data, variables, context) => {
-      // Handle a successful response
       console.log(data);
       Alert.alert("User added successfully", JSON.stringify(data.id));
       reset();
     },
     onError: (error, variables, context) => {
-      // Update the toast to show error
       console.log("failed to add", error.message);
       Alert.alert("Failed", error.message);
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data:signUpType) => {
     mutation.mutate(data);
   };
   return {
