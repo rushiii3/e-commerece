@@ -1,37 +1,114 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { TouchableOpacity } from "react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as SecureStore from "expo-secure-store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import CustomHeader from "@/components/CustomHeader";
+import { AuthContext, AuthProvider } from "@/context/AuthContext";
+import { useContext, useEffect } from "react";
+const queryClient = new QueryClient();
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
+const RootLayout = () => {
+  const router = useRouter();
+  const { setisAuthenticated } = useContext(AuthContext);
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        setisAuthenticated(true);
+        console.log("Token available");
+      } else {
+        setisAuthenticated(false);
+        console.log("No token found");
+      }
+    };
 
-  if (!loaded) {
-    return null;
-  }
-
+    checkToken();
+  }, []);
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          header: () => <CustomHeader />,
+        }}
+      />
+      <Stack.Screen
+        name="login"
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerTitle: "",
+          headerBackVisible: false,
+          headerBackTitleVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={34} color={"black"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="register"
+        options={{
+          headerShown: true,
+          // headerTransparent: true,
+          headerTitle: "",
+          headerBackVisible: false,
+          headerBackTitleVisible: false,
+          headerShadowVisible:false,
+          headerStyle: { backgroundColor: '#e8ecf4' },
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={34} color={"black"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          headerShown: true,
+          headerTitle: "Product Details",
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerBackTitleVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={34} color={"black"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="cart"
+        options={{
+          headerShown: true,
+          headerTitle: "Cart",
+          headerBackVisible: false,
+          headerBackTitleVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={34} color={"black"} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+    </Stack>
   );
-}
+};
+
+const Layout = () => {
+  return (
+    <GestureHandlerRootView>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+            <RootLayout />
+        </AuthProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
+  );
+};
+
+export default Layout;
